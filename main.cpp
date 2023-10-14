@@ -77,9 +77,9 @@ int main(int argc, char* argv[])
 
 		/*The code contained here modifies the output pixel values*/
 			/* Modify the pixels of the RGB image */
-		for (int i = 150; i < frame.rows; i++)
+		for (int i = 150; i < 300; i++)
 		{
-			for (int j = 150; j < frame.cols; j++)
+			for (int j = 300; j < 350; j++)
 			{
 				/*The following lines make the red and blue channels zero
 				(this section of the image will be shades of green)*/
