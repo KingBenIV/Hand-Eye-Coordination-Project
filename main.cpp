@@ -32,7 +32,10 @@ int main(int argc, char* argv[])
 	struct sp_port* port;
 	int err;
 	int key = 0;
-	char cmd;
+	char cmd; //cmd sent to box
+	int cmd_1; //cmd for firts cup
+	int cmd_2; //cmd for second cup
+	int cmd_3; //cmd for third cup
 
 	/* Set up and open the port */
 	/* check port usage */
@@ -60,26 +63,69 @@ int main(int argc, char* argv[])
 	/* set the number of bits */
 	sp_set_bits(port, 8);
 
-	/* specify the comand to send to the port */
-	cmd = 1;
 
 	/* set up to exit when q key is entered */
 	while (key != 'q') {
 		cap >> frame;
+		//Find the BRG values of the three pixels at the centre of the three zones
+		Vec3b intensity_1 = frame.at<Vec3b>(200, 325);
+		Vec3b intensity_2 = frame.at<Vec3b>(200, 375);
+		Vec3b intensity_3 = frame.at<Vec3b>(200, 425);
 
-		/*The code contained here reads and outputs a single pixel value at (10,15)*/
-		Vec3b intensity = frame.at<Vec3b>(10, 15);
-		int blue = intensity.val[0];
-		int green = intensity.val[1];
-		int red = intensity.val[2];
-		cout << "Intensity = " << endl << " " << blue << " " << green << " " << red << endl << endl;
-		/*End of modifying pixel values*/
+		///////////////* Determining which cmds to send*///////////////
 
-		/*The code contained here modifies the output pixel values*/
-			/* Modify the pixels of the RGB image */
-		for (int i = 150; i < 300; i++)
+		//where should the first cup go
+		if (intensity_1.val[0] > 128){ //is the object blue
+			cmd_1 = 0b00000011 //binary for 3
+		} 
+		else if (intensity_1.val[1] > 128){ // object is green
+			cmd_1 = 0b00000001 //binary for 1
+		}
+		else if (intensity_1.val[2] > 128){ // object is red
+			cmd_1 = 0b00000010 //binary for 2
+		}
+
+		//where should the second cup go
+		if (intensity_2.val[0] > 128){ //is the object blue
+			cmd_2 = 0b00001100; //binary for 12
+		} 
+		else if (intensity_2.val[1] > 128){ // object is green
+			cmd_2 = 0b00000100; //binary for 4
+		}
+		else if (intensity_2.val[2] > 128){ // object is red
+			cmd_2 = 0b00001000; //binary for 8
+		}
+		
+		//where should the thrid cup go
+		if (intensity_3.val[0] > 128){ //is the object blue
+			cmd_3 = 0b00110000; //binary for 48
+		} 
+		else if (intensity_3.val[1] > 128){ // object is green
+			cmd_3 = 0b00010000; //binary for 16
+		}
+		else if (intensity_3.val[2] > 128){ // object is red
+			cmd_3 = 0b00100000; //binary for 32
+		}
+
+		cmd = cmd_1 + cmd_2 + cmd_3;
+
+		////////////* End of 'Determining which cmds to send' *////////////
+
+
+		////////////*The code contained here modifies the output pixel values*////////////
+		for (int i = 150; i < 250; i++)
 		{
 			for (int j = 300; j < 350; j++)
+			{
+				/*The following lines make the green and blue channels zero
+				(this section of the image will be shades of red)*/
+				frame.at<Vec3b>(i, j)[0] = 0;
+				frame.at<Vec3b>(i, j)[1] = 0;
+			}
+		}
+		for (int i = 150; i < 250; i++)
+		{
+			for (int j = 350; j < 400; j++)
 			{
 				/*The following lines make the red and blue channels zero
 				(this section of the image will be shades of green)*/
@@ -87,7 +133,17 @@ int main(int argc, char* argv[])
 				frame.at<Vec3b>(i, j)[2] = 0;
 			}
 		}
-		/*End of modifying pixel values*/
+		for (int i = 150; i < 250; i++)
+		{
+			for (int j = 400; j < 450; j++)
+			{
+				/*The following lines make the red and green channels zero
+				(this section of the image will be shades of blue)*/
+				frame.at<Vec3b>(i, j)[1] = 0;
+				frame.at<Vec3b>(i, j)[2] = 0;
+			}
+		}
+		///////////////*End of modifying pixel values*///////////////
 
 		imshow(window_name, frame);
 		char key = (char)waitKey(25);
