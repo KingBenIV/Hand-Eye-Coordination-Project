@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <libserialport.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+#include <iostream>
+#include <cstdlib>
 
 #define BAUD 9600
 
@@ -33,9 +40,9 @@ int main(int argc, char* argv[])
 	int err;
 	int key = 0;
 	char cmd; //cmd sent to box
-	int cmd_1; //cmd for firts cup
-	int cmd_2; //cmd for second cup
-	int cmd_3; //cmd for third cup
+	int cmd_1 = 0; //cmd for firts cup
+	int cmd_2 = 0; //cmd for second cup
+	int cmd_3 = 0; //cmd for third cup
 
 	/* Set up and open the port */
 	/* check port usage */
@@ -68,42 +75,42 @@ int main(int argc, char* argv[])
 	while (key != 'q') {
 		cap >> frame;
 		//Find the BRG values of the three pixels at the centre of the three zones
-		Vec3b intensity_1 = frame.at<Vec3b>(200, 325);
-		Vec3b intensity_2 = frame.at<Vec3b>(200, 375);
-		Vec3b intensity_3 = frame.at<Vec3b>(200, 425);
+		Vec3b intensity_1 = frame.at<Vec3b>(175, 300);
+		Vec3b intensity_2 = frame.at<Vec3b>(175, 375);
+		Vec3b intensity_3 = frame.at<Vec3b>(175, 435);
 
 		///////////////* Determining which cmds to send*///////////////
 
 		//where should the first cup go
-		if (intensity_1.val[0] > 128){ //is the object blue
-			cmd_1 = 0b00000011 //binary for 3
-		} 
-		else if (intensity_1.val[1] > 128){ // object is green
-			cmd_1 = 0b00000001 //binary for 1
+		if (intensity_1.val[0] > 190) { //is the object blue
+			cmd_1 = 0b00000011; //binary for 3
 		}
-		else if (intensity_1.val[2] > 128){ // object is red
-			cmd_1 = 0b00000010 //binary for 2
+		else if (intensity_1.val[1] > 190) { // object is green
+			cmd_1 = 0b00000001; //binary for 1
+		}
+		else if (intensity_1.val[2] > 190) { // object is red
+			cmd_1 = 0b00000010; //binary for 2
 		}
 
 		//where should the second cup go
-		if (intensity_2.val[0] > 128){ //is the object blue
+		if (intensity_2.val[0] > 200) { //is the object blue
 			cmd_2 = 0b00001100; //binary for 12
-		} 
-		else if (intensity_2.val[1] > 128){ // object is green
+		}
+		else if (intensity_2.val[1] > 190) { // object is green
 			cmd_2 = 0b00000100; //binary for 4
 		}
-		else if (intensity_2.val[2] > 128){ // object is red
+		else if (intensity_2.val[2] > 190) { // object is red
 			cmd_2 = 0b00001000; //binary for 8
 		}
-		
+
 		//where should the thrid cup go
-		if (intensity_3.val[0] > 128){ //is the object blue
+		if (intensity_3.val[0] > 128) { //is the object blue
 			cmd_3 = 0b00110000; //binary for 48
-		} 
-		else if (intensity_3.val[1] > 128){ // object is green
+		}
+		else if (intensity_3.val[1] > 128) { // object is green
 			cmd_3 = 0b00010000; //binary for 16
 		}
-		else if (intensity_3.val[2] > 128){ // object is red
+		else if (intensity_3.val[2] > 128) { // object is red
 			cmd_3 = 0b00100000; //binary for 32
 		}
 
@@ -113,9 +120,9 @@ int main(int argc, char* argv[])
 
 
 		////////////*The code contained here modifies the output pixel values*////////////
-		for (int i = 150; i < 250; i++)
+		for (int i = 150; i < 200; i++)
 		{
-			for (int j = 300; j < 350; j++)
+			for (int j = 275; j < 325; j++)
 			{
 				/*The following lines make the green and blue channels zero
 				(this section of the image will be shades of red)*/
@@ -123,7 +130,7 @@ int main(int argc, char* argv[])
 				frame.at<Vec3b>(i, j)[1] = 0;
 			}
 		}
-		for (int i = 150; i < 250; i++)
+		for (int i = 150; i < 200; i++)
 		{
 			for (int j = 350; j < 400; j++)
 			{
@@ -133,9 +140,9 @@ int main(int argc, char* argv[])
 				frame.at<Vec3b>(i, j)[2] = 0;
 			}
 		}
-		for (int i = 150; i < 250; i++)
+		for (int i = 150; i < 200; i++)
 		{
-			for (int j = 400; j < 450; j++)
+			for (int j = 410; j < 460; j++)
 			{
 				/*The following lines make the red and green channels zero
 				(this section of the image will be shades of blue)*/
@@ -163,6 +170,8 @@ int main(int argc, char* argv[])
 		default:
 			break;
 		}
+
+		Sleep(100);
 	}
 	/* close the port */
 	sp_close(port);
