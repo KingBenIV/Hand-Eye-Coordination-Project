@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 		///////////////* Determining which cmds to send*///////////////
 
 		//where should the first cup go
-		if (intensity_1.val[0] > 190) { //is the object blue
+		if (intensity_1.val[0] > 200) { //is the object blue
 			cmd_1 = 0b00000011; //binary for 3
 		}
 		else if (intensity_1.val[1] > 190) { // object is green
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 		if (intensity_2.val[0] > 200) { //is the object blue
 			cmd_2 = 0b00001100; //binary for 12
 		}
-		else if (intensity_2.val[1] > 190) { // object is green
+		else if (intensity_2.val[1] > 170) { // object is green
 			cmd_2 = 0b00000100; //binary for 4
 		}
 		else if (intensity_2.val[2] > 190) { // object is red
