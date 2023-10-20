@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
 	struct sp_port* port;
 	int err;
 	int key = 0;
-	char cmd; //cmd sent to box
-	int cmd_1 = 0; //cmd for firts cup
+	char cmd; //cmd sent to I/O interface
+	int cmd_1 = 0; //cmd for first cup
 	int cmd_2 = 0; //cmd for second cup
 	int cmd_3 = 0; //cmd for third cup
 
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 		if (intensity_1.val[0] > 200) { //is the object blue
 			cmd_1 = 0b00000011; //binary for 3
 		}
-		else if (intensity_1.val[1] > 190) { // object is green
+		else if (intensity_1.val[1] > 128) { // object is green
 			cmd_1 = 0b00000001; //binary for 1
 		}
 		else if (intensity_1.val[2] > 190) { // object is red
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 		}
 
 		//where should the second cup go
-		if (intensity_2.val[0] > 200) { //is the object blue
+		if (intensity_2.val[0] > 190) { //is the object blue
 			cmd_2 = 0b00001100; //binary for 12
 		}
 		else if (intensity_2.val[1] > 170) { // object is green
