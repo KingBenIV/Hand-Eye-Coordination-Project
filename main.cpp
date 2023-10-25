@@ -75,42 +75,42 @@ int main(int argc, char* argv[])
 	while (key != 'q') {
 		cap >> frame;
 		//Find the BRG values of the three pixels at the centre of the three zones
-		Vec3b intensity_1 = frame.at<Vec3b>(175, 300);
-		Vec3b intensity_2 = frame.at<Vec3b>(175, 375);
-		Vec3b intensity_3 = frame.at<Vec3b>(175, 435);
+		Vec3b intensity_1 = frame.at<Vec3b>(175, 295);
+		Vec3b intensity_2 = frame.at<Vec3b>(165, 395);
+		Vec3b intensity_3 = frame.at<Vec3b>(170, 470);
 
 		///////////////* Determining which cmds to send*///////////////
 
 		//where should the first cup go
-		if (intensity_1.val[0] > 200) { //is the object blue
+		if ((intensity_1.val[0] > intensity_1.val[1]) & (intensity_1.val[0] > intensity_1.val[2])) { //is the object blue
 			cmd_1 = 0b00000011; //binary for 3
 		}
-		else if (intensity_1.val[1] > 128) { // object is green
+		else if ((intensity_1.val[1] > intensity_1.val[0]) & (intensity_1.val[1] > intensity_1.val[2])) { // object is green
 			cmd_1 = 0b00000001; //binary for 1
 		}
-		else if (intensity_1.val[2] > 190) { // object is red
+		else if ((intensity_1.val[2] > intensity_1.val[1]) & (intensity_1.val[2] > intensity_1.val[0])) { // object is red
 			cmd_1 = 0b00000010; //binary for 2
 		}
 
 		//where should the second cup go
-		if (intensity_2.val[0] > 190) { //is the object blue
+		if ((intensity_2.val[0] > intensity_2.val[1]) & (intensity_2.val[0] > intensity_2.val[2])) { //is the object blue
 			cmd_2 = 0b00001100; //binary for 12
 		}
-		else if (intensity_2.val[1] > 170) { // object is green
+		else if ((intensity_2.val[1] > intensity_2.val[0]) & (intensity_2.val[1] > intensity_2.val[2])) { // object is green
 			cmd_2 = 0b00000100; //binary for 4
 		}
-		else if (intensity_2.val[2] > 190) { // object is red
+		else if ((intensity_2.val[2] > intensity_2.val[1]) & (intensity_2.val[2] > intensity_2.val[0])) { // object is red
 			cmd_2 = 0b00001000; //binary for 8
 		}
 
-		//where should the thrid cup go
-		if (intensity_3.val[0] > 128) { //is the object blue
+		//where should the third cup go
+		if ((intensity_3.val[0] > intensity_3.val[1]) & (intensity_3.val[0] > intensity_3.val[2])) { //is the object blue
 			cmd_3 = 0b00110000; //binary for 48
 		}
-		else if (intensity_3.val[1] > 128) { // object is green
+		else if ((intensity_3.val[1] > intensity_3.val[0]) & (intensity_3.val[1] > intensity_3.val[2])) { // object is green
 			cmd_3 = 0b00010000; //binary for 16
 		}
-		else if (intensity_3.val[2] > 128) { // object is red
+		else if ((intensity_3.val[2] > intensity_3.val[1]) & (intensity_3.val[2] > intensity_3.val[0])) { // object is red
 			cmd_3 = 0b00100000; //binary for 32
 		}
 
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 		////////////*The code contained here modifies the output pixel values*////////////
 		for (int i = 150; i < 200; i++)
 		{
-			for (int j = 275; j < 325; j++)
+			for (int j = 270; j < 320; j++)
 			{
 				/*The following lines make the green and blue channels zero
 				(this section of the image will be shades of red)*/
@@ -130,9 +130,9 @@ int main(int argc, char* argv[])
 				frame.at<Vec3b>(i, j)[1] = 0;
 			}
 		}
-		for (int i = 150; i < 200; i++)
+		for (int i = 140; i < 190; i++)
 		{
-			for (int j = 350; j < 400; j++)
+			for (int j = 370; j < 420; j++)
 			{
 				/*The following lines make the red and blue channels zero
 				(this section of the image will be shades of green)*/
@@ -140,9 +140,9 @@ int main(int argc, char* argv[])
 				frame.at<Vec3b>(i, j)[2] = 0;
 			}
 		}
-		for (int i = 150; i < 200; i++)
+		for (int i = 145; i < 195; i++)
 		{
-			for (int j = 410; j < 460; j++)
+			for (int j = 445; j < 495; j++)
 			{
 				/*The following lines make the red and green channels zero
 				(this section of the image will be shades of blue)*/
